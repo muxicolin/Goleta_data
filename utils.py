@@ -18,4 +18,22 @@ def print_books(books: list[dict[str, Any]]) -> None:
         print("没有找到图书。")
         return
     for index, book in enumerate(books, start=1):
-        print(f"{index}. 《{book.get('title', '未知书名')}》 — {book.get('author', '未知作者')}")
+        status = "已借出" if book.get("borrowed", False) else "在馆"
+        print(f"{index}. 《{book.get('title', '未知书名')}》 — {book.get('author', '未知作者')} [{status}]")
+
+
+def prompt_book_index(prompt: str, book_count: int) -> int | None:
+    """Read a one-based book number; return None when input is invalid."""
+    if book_count == 0:
+        print("当前没有图书可操作。")
+        return None
+    value = input(prompt).strip()
+    try:
+        index = int(value)
+    except ValueError:
+        print("请输入列表中的数字编号。")
+        return None
+    if not 1 <= index <= book_count:
+        print("编号超出范围。")
+        return None
+    return index

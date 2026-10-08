@@ -10,6 +10,8 @@ class BookStorage:
 
     def __init__(self, file_path: str | Path | None = None) -> None:
         self.file_path = Path(file_path) if file_path else Path(__file__).with_name("books.json")
+        # Load saved data as soon as the application starts.
+        self.books = self._read()
 
     def _read(self) -> list[dict[str, Any]]:
         if not self.file_path.exists():
@@ -30,6 +32,11 @@ class BookStorage:
         self.file_path.parent.mkdir(parents=True, exist_ok=True)
         with self.file_path.open("w", encoding="utf-8") as file:
             json.dump(books, file, ensure_ascii=False, indent=2)
+        self.books = books
+
+    def save(self) -> None:
+        """Persist the current book data when the user exits."""
+        self._write(self._read())
 
     def add_book(self, title: str, author: str) -> dict[str, str]:
         book = {"title": title.strip(), "author": author.strip(), "borrowed": False}
@@ -75,3 +82,11 @@ class BookStorage:
         books[index - 1]["borrowed"] = borrowed
         self._write(books)
         return books[index - 1]
+
+    def get_statistics(self) -> dict[str, int]:
+        """Return total and currently borrowed book counts."""
+        books = self._read()
+        return {
+            "total": len(books),
+            "borrowed": sum(bool(book.get("borrowed", False)) for book in books),
+        }

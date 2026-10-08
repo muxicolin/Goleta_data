@@ -8,7 +8,7 @@ def main() -> None:
     storage = BookStorage()
     print("=== 本地图书管理系统 ===")
     while True:
-        print("\n1. 添加图书\n2. 查看全部图书\n3. 按书名搜索\n4. 删除图书\n5. 按作者筛选\n6. 借书\n7. 还书\n0. 退出")
+        print("\n1. 添加图书\n2. 查看全部图书\n3. 按书名搜索\n4. 删除图书\n5. 按作者筛选\n6. 借书\n7. 还书\n8. 查看图书统计\n0. 退出")
         choice = input("请选择操作：").strip()
 
         if choice == "1":
@@ -41,11 +41,16 @@ def main() -> None:
                 if book:
                     action = "已借出" if borrowed else "已归还"
                     print(f"《{book['title']}》{action}。")
+        elif choice == "8":
+            statistics = storage.get_statistics()
+            print(f"图书总数：{statistics['total']}")
+            print(f"已借出图书数量：{statistics['borrowed']}")
         elif choice == "0":
+            storage.save()
             print("已退出。")
             break
         else:
-            print("无效选项，请输入 0 至 7 之间的菜单编号。")
+            print("无效选项，请输入 0 至 8 之间的菜单编号。")
 
 
 if __name__ == "__main__":
